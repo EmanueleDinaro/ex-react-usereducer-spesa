@@ -8,10 +8,33 @@ export default function App() {
     const isAvaiable = addedProducts.find(
       (newProduct) => newProduct.name === product.name
     );
-    if (!isAvaiable) {
+    if (isAvaiable) {
+      updateProductQuantity(product);
+    } else {
       setAddedProducts([...addedProducts, { ...product, quantity: 1 }]);
     }
   };
+
+  const removeFromCart = (productToRemove) => {
+    const newCart = addedProducts.filter(
+      (product) => product.name !== productToRemove.name
+    );
+    setAddedProducts(newCart);
+  };
+
+  const updateProductQuantity = (product) => {
+    const updatedCart = addedProducts.map((newProduct) => {
+      if (newProduct.name === product.name) {
+        return { ...newProduct, quantity: newProduct.quantity + 1 };
+      }
+      return newProduct;
+    });
+    setAddedProducts(updatedCart);
+  };
+
+  const total = addedProducts.reduce((sum, product) => {
+    return sum + product.price * product.quantity;
+  }, 0);
 
   return (
     <div>
@@ -34,9 +57,13 @@ export default function App() {
             {addedProducts.map((product) => (
               <li key={product.name}>
                 {product.name} - €{product.price} x {product.quantity}
+                <button onClick={() => removeFromCart(product)}>
+                  Rimuovi dal carrello
+                </button>
               </li>
             ))}
           </ul>
+          <h3>Totale: {total.toFixed(2)}€</h3>
         </>
       )}
     </div>
